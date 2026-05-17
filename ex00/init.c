@@ -6,7 +6,7 @@
 /*   By: smilch <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/17 22:35:40 by smilch            #+#    #+#             */
-/*   Updated: 2026/05/17 22:35:53 by smilch           ###   ########.fr       */
+/*   Updated: 2026/05/17 22:59:04 by smilch           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,7 @@ int	*make_clues(char *str, int n)
 	int	*clue_list;
 	int	i;
 
-	clue_list = (int *)malloc(sizeof(int) * n * 4);
+	clue_list = (int *)malloc(sizeof(int) * (n * 4 + 1));
 	i = 0;
 	while (i < 4 * n)
 	{
@@ -103,5 +103,6 @@ int	*make_clues(char *str, int n)
 		str += 2;
 		i++;
 	}
+	clue_list[i] = 0;
 	return (clue_list);
 }

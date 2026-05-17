@@ -6,7 +6,7 @@
 /*   By: smilch <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/17 22:36:08 by smilch            #+#    #+#             */
-/*   Updated: 2026/05/17 22:36:11 by smilch           ###   ########.fr       */
+/*   Updated: 2026/05/17 23:00:59 by smilch           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ int	is_safe(int ***board, int *slot, int *clue_list)
 	return (1);
 }
 
-void	print_board(int ***board, int n)
+void	print_board(int ***board, int n, int *clue_list)
 {
 	int		x;
 	int		y;
@@ -100,4 +100,5 @@ void	print_board(int ***board, int n)
 		}
 		write(1, "\n", 1);
 	}
+	clue_list[4 * n + 1] = 1;
 }

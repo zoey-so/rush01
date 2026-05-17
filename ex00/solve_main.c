@@ -6,7 +6,7 @@
 /*   By: smilch <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/17 22:36:56 by smilch            #+#    #+#             */
-/*   Updated: 2026/05/17 22:36:59 by smilch           ###   ########.fr       */
+/*   Updated: 2026/05/17 23:00:34 by smilch           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ int		is_repeat(int ***board, int *slot);
 
 int		is_safe(int ***board, int *slot, int *clue_list);
 
-void	print_board(int ***board, int n);
+void	print_board(int ***board, int n, int *clue_list);
 
 int	solve(int ***board, int *clue_list, int y, int x)
 {
@@ -54,7 +54,7 @@ int	solve(int ***board, int *clue_list, int y, int x)
 
 	n = board[0][0][0];
 	if (y == n)
-		print_board(board, n);
+		print_board(board, n, clue_list);
 	if (y == n)
 		return (1);
 	if (x >= n)
@@ -94,10 +94,14 @@ int	main(int argc, char **argv)
 			init_clue_board_1_n(clue_list, board, n);
 			update_pos(board, n);
 			solve(board, clue_list, 0, 0);
+			if (!clue_list[4 * n + 1])
+				write(1, "Error\n", 6);
 			free_board(board, n);
 		}
 		else
 			write(1, "Error\n", 6);
 	}
+	else
+		write(1, "Error\n", 6);
 	return (0);
 }
