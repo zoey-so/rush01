@@ -52,7 +52,7 @@ int	is_input_valid(char *str)
 	return (n);
 }
 
-void free_board(t_slot **board, int n)
+void free_board(char ***board, int n)
 {
 	int x;
 	int y;
@@ -67,14 +67,15 @@ void free_board(t_slot **board, int n)
 			x = -1;
 			while (++x < n)
 			{
-				if (board[y][x].pos_val)
-					free(board[y][x].pos_val);
+				if (board[y][x])
+					free(board[y][x]);
 			}
 		}
 	}
 	free(board);
 }
 
+/*
 void	init_slot(t_slot *slot, int n, int y, int x)
 {
 	int	i;
@@ -89,8 +90,9 @@ void	init_slot(t_slot *slot, int n, int y, int x)
 	slot -> s_y = y;
 	slot -> s_x = x;
 	slot -> s_n = n;
-}
+}*/
 
+/*
 t_slot **init_board(int n)
 {
 	t_slot	**board;
@@ -115,8 +117,37 @@ t_slot **init_board(int n)
 		
 	}
 	return (board);
+}*/
+
+char	***init_board(int n)
+{
+	int	x;
+	int	y;
+	char	***board;
+	int	i;
+
+	board = (char***)malloc(sizeof(char**) * n);
+	y = -1;
+	while (++y < n)
+	{
+		board[y] = (char**)malloc(sizeof(char*) * n);
+		x = -1;
+		while(++x < n)
+		{
+			board[y][x] = (char*)malloc(sizeof(char) * (n + 4));
+			board[y][x][0] = n;
+			i = 0;
+			while (++i <= n)
+				board[y][x][i] = 1;
+			board[y][x][n + 1] = 0;
+			board[y][x][n + 2] = (char)y;
+			board[y][x][n + 3] = (char)x;
+		}
+	}
+	return (board);
 }
 
+/*
 t_clue	*make_clues(char *str, int n)
 {
 	t_clue	*clue_list;
@@ -143,23 +174,25 @@ t_clue	*make_clues(char *str, int n)
 		i++;
 	}
 	return (clue_list);
-}
-void	put_val(t_slot *slot, char val, int n)
+}*/
+
+void	put_val(char *slot, char val, int n)
 {
 	int	i;
 
-	if (slot -> val)
+	if (slot[n + 1])
 		return ;
-	slot -> val = val;
-	i = -1;
+	slot[n + 1] = val;
+	i = 0;
 	while (++i < n)
 	{
-		if (i + 1 != val)
-			slot -> pos_val[i] = 0;
+		if (i != val)
+			slot[i] = 0;
 	}
 }
 
-void	init_clue_board_1(t_clue *clue_list, t_slot **board, int n)
+/*
+void	init_clue_board_1(int *clue_list, char ***board, int n)
 {
 	int	i;
 
@@ -179,9 +212,39 @@ void	init_clue_board_1(t_clue *clue_list, t_slot **board, int n)
 		if (clue_list[i].v_2 == 1)
 				put_val(&board[i - n][n - 1], (char)n, n);
 	}
+}*/
+
+void	init_clue_board_1(int *clue_list, char ***board, int n)
+{
+	int	i;
+
+	
+	i = -1;
+	while (++i < n)
+	{
+		if (clue_list[i] == 1)
+				put_val(&board[0][i], (char)n, n);
+	}
+	i--;
+	while (++i < 2 * n)
+	{
+		if (clue_list[i] == 1)
+				put_val(&board[n - 1][i], (char)n, n);
+	}
+	i--;
+	while (++i < 3 * n)
+	{
+		if (clue_list[i] == 1)
+				put_val(&board[i - n][0], (char)n, n);
+	}
+	i--;
+	while (++i < 4 * n)
+		if (clue_list[i] == 1)
+				put_val(&board[i - n][n - 1], (char)n, n);
+	}
 }
 
-void	init_clue_board_n(t_clue *clue_list, t_slot **board, int n)
+void	init_clue_board_n(int *clue_list, char ***board, int n)
 {
 	int	i;
 	int k;
@@ -189,12 +252,14 @@ void	init_clue_board_n(t_clue *clue_list, t_slot **board, int n)
 	i = -1;
 	while (++i < n)
 	{
-		if (clue_list[i].v_1 == n)
+		if (clue_list[i] == n)
 		{
 			k = -1;
 			while (++k < n)
 				put_val(&board[k][i], (char)k + 1, n);
 		}
+	i--;
+	while (++i < 2 * n)
 		if (clue_list[i].v_2 == n)
 		{
 			k = n;
@@ -203,15 +268,19 @@ void	init_clue_board_n(t_clue *clue_list, t_slot **board, int n)
 		}
 	}
 	i--;
-	while (++i < 2 * n)
+	while (++i < 3 * n)
 	{
-		if (clue_list[i].v_1 == n)
+		if (clue_list[i] == n)
 		{
 			k = -1;
 			while (++k < n)
 				put_val(&board[i - n][k], (char)k + 1, n);
 		}
-		if (clue_list[i].v_2 == n)
+	}
+	i--;
+	while (++i < 4 * n)
+	{
+		if (clue_list[i] == n)
 		{
 			k = n;
 			while (--k > 0)
@@ -220,19 +289,19 @@ void	init_clue_board_n(t_clue *clue_list, t_slot **board, int n)
 	}
 }
 
-void	rem_pos_val(t_slot *slot, int min, int max)
+
+void	rem_pos_val(char *slot, int min, int max)
 {
-	write(1, "here", 4);
-	if (slot -> val)
+	if (slot[slot[0] + 1])
 		return ;
 	while (min <= max)
 	{
-		slot -> pos_val[min - 1] = 0;
+		slot[min] = 0;
 		min++;
 	}
 }
 
-void	init_clue_board_1_n(t_clue *clue_list, t_slot **board, int n)
+void	init_clue_board_1_n(int *clue_list, char ***board, int n)
 {
 	int	i;
 	int	k;
@@ -240,58 +309,66 @@ void	init_clue_board_1_n(t_clue *clue_list, t_slot **board, int n)
 	i = -1;
 	while (++i < n)
 	{
-		if (clue_list[i].v_1 > 1 && clue_list[i].v_1 < n)
+		if (clue_list[i] > 1 && clue_list[i] < n)
 		{
 			k = -1;
-			while ((++k - (int)clue_list[i].v_1 + 2) <= 0)
-				rem_pos_val(&board[k][i], n - clue_list[i].v_1 + 2 + k, n);
+			while ((++k - (int)clue_list[i] + 2) <= 0)
+				rem_pos_val(&board[k][i], n - clue_list[i] + 2 + k, n);
 		}
-		if (clue_list[i].v_2 > 1 && clue_list[i].v_2 < n)
-		{
-			k = -1;
-			while ((++k - clue_list[i].v_2 + 2) <= 0)
-				rem_pos_val(&board[n - 1 - k][i], n - clue_list[i].v_2 + 2 + k, n);
-		}
-		char c = '0' + i;
-		write(1, &c, 1);
 	}
 	i--;
 	while (++i < 2 * n)
 	{
-		if (clue_list[i].v_1 > 1 && clue_list[i].v_1 < n)
+		if (clue_list[i] > 1 && clue_list[i] < n)
+		{
+			k = -1;
+			while ((++k - clue_list[i] + 2) <= 0)
+				rem_pos_val(&board[n - 1 - k][i], n - clue_list[i] + 2 + k, n);
+		}
+	}
+	i--;
+	while (++i < 3 * n)
+	{
+		if (clue_list[i] > 1 && clue_list[i] < n)
 		{
 			k = -1;
 			while ((++k - clue_list[i].v_1 + 2) <= 0)
-				rem_pos_val(&board[i - n][k], n - clue_list[i].v_1 + 2 + k, n);
+				rem_pos_val(&board[i - n][k], n - clue_list[i] + 2 + k, n);
 		}
-		if (clue_list[i].v_2 > 1 && clue_list[i].v_2 < n)
+	}
+	i--;
+	while (++i < 4 * n)
+	{
+		if (clue_list[i] > 1 && clue_list[i] < n)
 		{
 			k = -1;
 			while ((++k - clue_list[i].v_2 + 2) <= 0)
-				rem_pos_val(&board[i - n][n - 1 - k], n - clue_list[i].v_2 + 2 + k,n);
+				rem_pos_val(&board[i - n][n - 1 - k], n - clue_list[i] + 2 + k,n);
 		}
 	}
 }
 
-void	update_pos_row_col(t_slot **board, int y, int x, char val, int n)
+void	update_pos_row_col(char ***board, int y, int x, char val)
 {
 	int	i;
+	int	n;
 
 	i = -1;
+	n = board[0][0][0];
 	while (++i < n)
 	{
 		if (i != x)
-			board[y][i].pos_val[val - 1] = 0;
+			board[y][i][val] = 0;
 	}
 	i = -1;
 	while (++i < n)
 	{
 		if (i != y)
-			board[i][x].pos_val[val - 1] = 0;
+			board[i][x][val] = 0;
 	}
 }
 
-void	update_pos(t_slot **board, int n)
+void	update_pos(char ***board, int n)
 {
 	int	x;
 	int	y;
@@ -302,120 +379,127 @@ void	update_pos(t_slot **board, int n)
 		x = -1;
 		while(++x < n)
 		{
-			if (board[y][x].val)
+			if (board[y][x][n + 1])
 			{
-				update_pos_row_col(board, y, x, board[y][x].val, n);
+				update_pos_row_col(board, y, x, board[y][x][n + 1]);
 			}
 		}
 	}	
 }
 
-int	is_safe_col_tb(t_slot **board, t_slot *slot, t_clue *clue_list)
+int	is_safe_col_tb(char ***board, char *slot, int *clue_list)
 {
 	int		y;
 	char	max;
 	int 	visible;
+	int		n;
 
 	max = 0;
 	visible = 0;
 	y = -1;
-	while (++y < slot -> s_n)
+	n = board[0][0][0];
+	while (++y < n)
 	{
-		if (board[y][slot -> s_x].val > max)
+		if (board[y][slot[n + 3]][n + 1] > max)
 		{
 			visible++;
-			max = board[y][slot -> s_x].val;
+			max = board[y][slot[n + 3]][n + 1];
 		}
 	}
-	if (max == slot -> s_n && (clue_list[slot -> s_x].v_1 - visible) != 0)
+	if (max == n && (clue_list[slot[n + 3]] - visible) != 0)
 		return (-1);
-	return (clue_list[slot -> s_x].v_1 - visible);
+	return (clue_list[slot[n + 3]] - visible);
 }
 
-int	is_safe_col_bt(t_slot **board, t_slot *slot, t_clue *clue_list)
+int	is_safe_col_bt(char ***board, char *slot, int *clue_list)
 {
 	int		y;
 	char	max;
 	int 	visible;
+	int		n;
 
 	max = 0;
 	visible = 0;
-	y = slot -> s_n;
+	n = board[0][0][0];
+	y = n;
 	while (--y >= 0)
 	{
-		if (board[y][slot -> s_x].val > max)
+		if (board[y][slot[n + 3]][n + 1] > max)
 		{
 			visible++;
-			max = board[y][slot -> s_x].val;
+			max = board[y][slot[n + 3]][n + 1];
 		}
 	}
-	return (clue_list[slot -> s_x].v_2 - visible);
+	return (clue_list[slot[n + 3] + n] - visible);
 }
 
-int	is_safe_row_lr(t_slot **board, t_slot *slot, t_clue *clue_list)
+int	is_safe_row_lr(char ***board, char *slot, int *clue_list)
 {
 	int		x;
 	char	max;
 	int 	visible;
+	int		n;
 
 	max = 0;
 	visible = 0;
 	x = -1;
-	while (++x < slot -> s_n)
+	n = board[0][0][0];
+	while (++x < n)
 	{
-		if (board[slot -> s_y][x].val > max)
+		if (board[slot[n + 2]][x][n + 1] > max)
 		{
 			visible++;
-			max = board[slot -> s_y][x].val;
+			max = board[slot[n + 2]][x][n + 1];
 		}
 	}
-	if (max == slot -> s_n && (clue_list[slot -> s_y + slot -> s_n].v_1 -
-		visible) != 0)
+	if (max == n && (clue_list[slot[n + 2] + 2 * n] - visible) != 0)
 		return (-1);
-	return (clue_list[slot -> s_y + slot -> s_n].v_1 - visible);
+	return (clue_list[slot[n + 2] + 2 * n] - visible);
 }
 
-int	is_safe_row_rl(t_slot **board, t_slot *slot, t_clue *clue_list)
+int	is_safe_row_rl(char **board, char *slot, int *clue_list)
 {
 	int		x;
 	char	max;
 	int 	visible;
+	int		n;
 
 	max = 0;
 	visible = 0;
-	x = slot -> s_n;
+	n = board[0][0][0];
+	x = n;
 	while (--x >= 0)
 	{
-		if (board[slot -> s_y][x].val > max)
+		if (board[slot[n + 2]][x][n + 1] > max)
 		{
 			visible++;
-			max = board[slot -> s_y][x].val;
+			max = board[slot[n + 2]][x][n + 1];
 		}
 	}
-	return (clue_list[slot -> s_y + slot -> s_n].v_2 - visible);
+	return (clue_list[slot[n + 2] + 3 * n] - visible);
 }
 
-int	is_repeat(t_slot **board, t_slot *slot)
+int	is_repeat(char ***board, char *slot)
 {
 	int x;
 	int	y;
 
 	x = -1;
-	while (++x < slot -> s_n)
+	while (++x < slot[0])
 	{
-		if (x != slot -> s_x && board[slot -> s_y][x].val == slot -> val)
+		if (x != slot[n + 3] && board[slot[n + 2]][x][n + 1] == slot[n + 1])
 			return (0);
 	}
 	y = -1;
-	while (++y < slot -> s_n)
+	while (++y < slot[0])
 	{
-		if (y != slot -> s_y && board[y][slot -> s_x].val == slot -> val)
+		if (y != slot[n + 2] && board[y][slot[n + 3]][n + 1] == slot[n + 1])
 			return (0);
 	}
 	return (1);
 }
 
-int	is_safe(t_slot **board, t_slot *slot, t_clue *clue_list)
+int	is_safe(char ***board, char *slot, int *clue_list)
 {
 	if (!is_repeat(board, slot))
 		return (0);
@@ -430,7 +514,7 @@ int	is_safe(t_slot **board, t_slot *slot, t_clue *clue_list)
 	return (1);
 }
 
-void	print_board(t_slot **board, int n)
+void	print_board(char ***board, int n)
 {
 	int	x;
 	int	y;
@@ -442,7 +526,7 @@ void	print_board(t_slot **board, int n)
 		x = -1;
 		while (++x < n)
 		{
-			c = '0' + board[y][x].val;
+			c = '0' + board[y][x][n + 1];
 			write(1, &c, 1);
 			if (x != n - 1)
 				write(1, " ", 1);
@@ -451,12 +535,12 @@ void	print_board(t_slot **board, int n)
 	}	
 }
 
-int	solve(t_slot **board, t_clue *clue_list, int y, int x)
+int	solve(char ***board, int *clue_list, int y, int x)
 {
 	char	val;
 	int		n;
 
-	n = board[0][0].s_n;
+	n = board[0][0][0];
 	if (y == n)
 	{
 		print_board(board, n);
@@ -469,16 +553,16 @@ int	solve(t_slot **board, t_clue *clue_list, int y, int x)
 	val = 0;
 	while(++val <= n)
 	{
-		if (board[y][x].pos_val[val - 1])
+		if (board[y][x][val])
 		{
-			board[y][x].val = val;
+			board[y][x][n + 1] = val;
 			if (is_safe(board, &board[y][x], clue_list))
 			{
 				printf("\nassigning %d to slot %d, %d \n", (int)val, y + 1, x + 1);
 				if (solve(board, clue_list, y, x + 1))
 					return (1);
 			}
-			board[y][x].val = 0;
+			board[y][x][n + 1] = 0;
 		}
 	}
 	return (0);
