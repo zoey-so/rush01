@@ -19,9 +19,9 @@ int	is_input_valid(char *str)
 				return (0);
 			str++;
 		}
-	} 
+	}
 	if ((((str - str_s) / 2) + 1) % 4 != 0)
-		return (0); 
+		return (0);
 	n = ((((str - str_s) / 2) + 1) / 4);
 	if (n < 4 || n > 9)
 		return (0);

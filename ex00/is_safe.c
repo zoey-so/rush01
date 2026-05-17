@@ -16,7 +16,7 @@ int	count_if_last_x(int ***board, int *slot)
 	int	i;
 	int	count;
 	int	n;
-		
+
 	n = board[0][0][0];
 	i = -1;
 	count = 0;
@@ -29,11 +29,11 @@ int	count_if_last_x(int ***board, int *slot)
 }
 
 int	count_if_last_y(int ***board, int *slot)
-{	
+{
 	int	i;
 	int	count;
 	int	n;
-		
+
 	n = board[0][0][0];
 	i = -1;
 	count = 0;

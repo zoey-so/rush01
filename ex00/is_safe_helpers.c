@@ -1,6 +1,5 @@
 #include <unistd.h>
 #include <stdlib.h>
-#include <stdio.h>
 
 int	is_safe_col_tb(int ***board, int *slot, int *clue_list)
 {
@@ -21,8 +20,6 @@ int	is_safe_col_tb(int ***board, int *slot, int *clue_list)
 			max = board[y][slot[n + 3]][n + 1];
 		}
 	}
-	//if (max == n && (clue_list[slot[n + 3]] - visible) != 0)
-	//	return (-1);
 	return (clue_list[slot[n + 3]] - visible);
 }
 
@@ -67,11 +64,6 @@ int	is_safe_row_lr(int ***board, int *slot, int *clue_list)
 			max = board[slot[n + 2]][x][n + 1];
 		}
 	}
-	//printf("\n%d %d\n", max, n);
-	//if (max == n && (clue_list[slot[n + 2] + 2 * n] - visible) != 0)
-	//	return (-1);
-	//printf("\nclue: %d\n", clue_list[slot[n + 2] + 2 * n]);
-	//printf("\nvisible: %d\n", visible);
 	return (clue_list[slot[n + 2] + 2 * n] - visible);
 }
 

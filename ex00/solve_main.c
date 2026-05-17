@@ -1,6 +1,5 @@
 #include <unistd.h>
 #include <stdlib.h>
-#include <stdio.h>
 
 int		is_input_valid(char *str);
 
@@ -42,12 +41,10 @@ int	solve(int ***board, int *clue_list, int y, int x)
 	int	n;
 
 	n = board[0][0][0];
-	printf("%d", n);
 	if (y == n)
-	{
 		print_board(board, n);
+	if (y == n)
 		return (1);
-	}
 	if (x >= n)
 		return (solve(board, clue_list, y + 1, 0));
 	if (board[y][x][n + 1])
@@ -58,12 +55,9 @@ int	solve(int ***board, int *clue_list, int y, int x)
 		if (board[y][x][val])
 		{
 			board[y][x][n + 1] = val;
-			if (is_safe(board, board[y][x], clue_list))
-			{
-				printf("\nassigning %d to slot %d, %d \n", val, y + 1, x + 1);
-				if (solve(board, clue_list, y, x + 1))
-					return (1);
-			}
+			if (is_safe(board, board[y][x], clue_list)
+				&& solve(board, clue_list, y, x + 1))
+				return (1);
 			board[y][x][n + 1] = 0;
 		}
 	}
@@ -81,64 +75,17 @@ int	main(int argc, char **argv)
 		n = (is_input_valid(argv[1]));
 		if (n)
 		{
-			//printf("%d", n);
 			board = init_board(n);
-			for (int y = 0; y < n; y++)
-			{
-				for(int x = 0; x < n; x++)
-					printf(" %d ", (int)board[y][x][n + 1]);
-				printf("\n");
-			}
 			clue_list = make_clues(argv[1], n);
-			for (int i = 0; i < 4 * n; i++)
-				printf("%d ", clue_list[i]);
-			//printf("\n");
-			/*
-			int i = -1;
-			while (++i < n)
-			{
-				printf("col%dtop: %d\n", i, (int)clue_list[i]);
-				printf("col%dbottom: %d\n", i, (int)clue_list[i + n]);
-			}
-			i--;
-			while (++i < 2 * n)
-			{
-				printf("row%dleft: %d\n", i - n, (int)clue_list[i + 2 * n]);
-				printf("rpw%dright: %d\n", i - n, (int)clue_list[i + 3 * n]);
-			}
-			*/
 			init_clue_board_n(clue_list, board, n);
 			init_clue_board_1(clue_list, board, n);
-			
-			for (int y = 0; y < n; y++)
-			{
-				for(int x = 0; x < n; x++)
-					printf(" %d ", (int)board[y][x][n + 1]);
-				printf("\n");
-			}
-			
-			
 			init_clue_board_1_n(clue_list, board, n);
 			update_pos(board, n);
-
-			for (int y = 0; y < n; y++)
-			{
-				for(int x = 0; x < n; x++)
-				{
-					printf("slot %d %d possible: ", y + 1, x + 1);
-					for(int i = 0; i <  n; i++)
-					{
-						if (board[y][x][i + 1])
-							printf("%d ", i + 1);
-					}
-					printf("\n");
-				}
-			}
 			solve(board, clue_list, 0, 0);
 			free_board(board, n);
 		}
 		else
-			printf("Error");
+			write(1, "Error\n", 6);
 	}
 	return (0);
 }
