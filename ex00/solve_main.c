@@ -6,7 +6,7 @@
 /*   By: smilch <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/17 22:36:56 by smilch            #+#    #+#             */
-/*   Updated: 2026/05/17 23:00:34 by smilch           ###   ########.fr       */
+/*   Updated: 2026/05/17 23:10:47 by smilch           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,11 +97,9 @@ int	main(int argc, char **argv)
 			if (!clue_list[4 * n + 1])
 				write(1, "Error\n", 6);
 			free_board(board, n);
+			return (0);
 		}
-		else
-			write(1, "Error\n", 6);
 	}
-	else
-		write(1, "Error\n", 6);
+	write(1, "Error\n", 6);
 	return (0);
 }

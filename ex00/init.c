@@ -6,12 +6,22 @@
 /*   By: smilch <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/17 22:35:40 by smilch            #+#    #+#             */
-/*   Updated: 2026/05/17 22:59:04 by smilch           ###   ########.fr       */
+/*   Updated: 2026/05/17 23:11:14 by smilch           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <unistd.h>
 #include <stdlib.h>
+
+int	check_digits(char *str, int n)
+{
+	while (*str)
+	{
+		if (*str != ' ' && (int)(*str - '0') > n)
+			return (0);
+	}
+	return (1);
+}
 
 int	is_input_valid(char *str)
 {
@@ -35,6 +45,8 @@ int	is_input_valid(char *str)
 		return (0);
 	n = ((((str - str_s) / 2) + 1) / 4);
 	if (n < 1 || n > 9)
+		return (0);
+	if (!check_digits(str_s, n))
 		return (0);
 	return (n);
 }
